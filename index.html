@@ -1,0 +1,553 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Reach Boost — Design Sandbox · Villa Sjövik</title>
+<meta name="robots" content="noindex,nofollow">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;1,400&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:    #021A0E;
+  --bg2:   #032B16;
+  --bg3:   #063B1E;
+  --brn:   #18130F;
+  --brn2:  #231E18;
+  --gold:  #D4A84B;
+  --gold2: #F0C878;
+  --warm:  #C4956A;
+  --ink:   #F2EDE4;
+  --muted: rgba(242,237,228,.52);
+  --bdr:   rgba(255,255,255,.08);
+  --green: #34C759;
+  --green-deep: #0a7a3c;
+  --ease:  cubic-bezier(.16,1,.3,1);
+}
+html,body{overflow-x:hidden}
+html{scroll-behavior:smooth}
+body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--ink);min-height:100vh}
+
+/* ----- SANDBOX NAV ----- */
+.sb-bar{position:sticky;top:0;z-index:30;
+  background:linear-gradient(180deg,rgba(2,26,14,.96) 0%,rgba(2,26,14,.82) 100%);
+  backdrop-filter:blur(18px) saturate(1.3);-webkit-backdrop-filter:blur(18px) saturate(1.3);
+  border-bottom:1px solid rgba(212,168,75,.18);
+  padding:14px 22px;display:flex;align-items:center;justify-content:space-between;gap:18px;flex-wrap:wrap}
+.sb-brand{display:flex;align-items:baseline;gap:10px;font-family:'Playfair Display',serif;font-size:16px;color:var(--ink);letter-spacing:-.01em}
+.sb-brand em{font-style:italic;color:var(--gold);font-size:13px;font-family:'Inter',sans-serif;letter-spacing:.18em;text-transform:uppercase;font-weight:600}
+.sb-tabs{display:flex;gap:6px;background:rgba(0,0,0,.32);border:1px solid rgba(212,168,75,.14);border-radius:100px;padding:4px}
+.sb-tab{appearance:none;background:transparent;border:none;cursor:pointer;
+  font-family:'Inter',sans-serif;font-size:11px;font-weight:600;letter-spacing:.22em;text-transform:uppercase;color:var(--muted);
+  padding:9px 18px;border-radius:100px;transition:color .3s var(--ease),background .3s var(--ease)}
+.sb-tab:hover{color:var(--ink)}
+.sb-tab.active{background:var(--gold);color:#1a1410}
+.sb-meta{font-size:10px;letter-spacing:.24em;text-transform:uppercase;color:var(--muted)}
+
+/* ----- VARIANT FRAME ----- */
+.variant{display:none;padding:60px 22px 120px;
+  background:linear-gradient(168deg,#2a231c 0%,var(--brn2) 30%,var(--brn) 70%,#110e0b 100%);
+  position:relative;overflow:hidden;min-height:calc(100vh - 60px)}
+.variant.show{display:block}
+.variant::before{content:'';position:absolute;width:500px;height:500px;border-radius:50%;
+  background:radial-gradient(circle,rgba(212,168,75,.10),transparent);
+  filter:blur(120px);top:-150px;right:-100px;pointer-events:none}
+.v-inner{position:relative;z-index:1;max-width:900px;margin:0 auto}
+.sec-lbl{font-size:10px;font-weight:600;letter-spacing:.26em;text-transform:uppercase;color:var(--gold);
+  display:inline-flex;align-items:center;gap:14px;margin-bottom:18px}
+.sec-lbl::before{content:'';width:32px;height:1px;background:linear-gradient(90deg,var(--gold),transparent)}
+.sec-h2{font-family:'Playfair Display',serif;font-weight:400;font-size:clamp(32px,4.4vw,52px);line-height:1.08;letter-spacing:-.01em;color:var(--ink);margin-bottom:14px;max-width:720px}
+.sec-h2 em{font-style:italic;color:var(--gold)}
+.v-blurb{font-size:13px;color:var(--muted);max-width:540px;margin-bottom:48px;line-height:1.7}
+.v-blurb code{font-family:'SF Mono','Menlo',monospace;font-size:11px;color:var(--gold2);background:rgba(212,168,75,.08);padding:2px 6px;border-radius:4px}
+
+/* ----- PRICE GRID + BOX (shared) ----- */
+.price-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:28px;max-width:760px;margin:0 auto;align-items:start}
+.pkg-col{display:flex;flex-direction:column;align-items:stretch;position:relative}
+
+.price-box{border:1px solid rgba(212,168,75,.2);border-top:2px solid rgba(212,168,75,.45);border-radius:22px;
+  background:linear-gradient(145deg,rgba(212,168,75,.07) 0%,rgba(212,168,75,.02) 55%,rgba(212,168,75,.045) 100%);
+  backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);
+  padding:48px 36px 0;position:relative;text-align:left;overflow:hidden;
+  box-shadow:0 50px 120px rgba(0,0,0,.72),0 22px 44px rgba(0,0,0,.52),0 8px 16px rgba(0,0,0,.4),0 0 60px rgba(212,168,75,.06),inset 0 1px 0 rgba(255,255,255,.06);
+  transition:border-color .4s,box-shadow .4s var(--ease)}
+.price-box.featured{border-color:rgba(212,168,75,.5);border-top-color:rgba(212,168,75,.65);
+  background:linear-gradient(145deg,rgba(212,168,75,.1) 0%,rgba(212,168,75,.035) 55%,rgba(212,168,75,.075) 100%);
+  box-shadow:0 60px 140px rgba(0,0,0,.78),0 26px 52px rgba(0,0,0,.55),0 10px 22px rgba(0,0,0,.42),0 0 90px rgba(212,168,75,.14),inset 0 1px 0 rgba(255,255,255,.08)}
+.price-ribbon{position:absolute;top:0;left:36px;background:var(--gold);color:#1a1410;font-family:'Inter',sans-serif;font-size:9px;font-weight:700;letter-spacing:.2em;text-transform:uppercase;padding:6px 16px;border-radius:0 0 10px 10px;z-index:2}
+
+.price-title{font-family:'Playfair Display',serif;font-size:30px;font-weight:500;color:var(--ink);margin-bottom:8px;line-height:1.05;letter-spacing:-.005em}
+.price-sub{font-family:'Inter',sans-serif;font-size:12px;color:rgba(242,237,228,.55);margin-bottom:36px;letter-spacing:.03em;line-height:1.6}
+.price-total-lbl{font-size:10px;letter-spacing:.24em;text-transform:uppercase;color:var(--gold);margin-bottom:12px}
+.price-orig{font-family:'Inter',sans-serif;font-size:15px;font-weight:300;color:rgba(242,237,228,.28);text-decoration:line-through;margin-bottom:6px;letter-spacing:.02em}
+.price-total{font-family:'Playfair Display',serif;font-size:clamp(32px,4vw,58px);font-weight:500;color:var(--ink);line-height:1}
+.price-unit{font-family:'Inter',sans-serif;font-size:14px;font-weight:300;color:var(--muted);display:block;margin-top:8px}
+.price-includes{margin-top:32px;display:flex;flex-direction:column;gap:10px;text-align:left;padding-bottom:36px}
+.pi{display:flex;align-items:flex-start;gap:10px;font-size:13px;color:rgba(242,237,228,.65);line-height:1.5}
+.pi::before{content:'·';color:var(--gold);font-size:16px;flex-shrink:0;line-height:1.2;margin-top:1px}
+.pi.hi{color:rgba(242,237,228,.9);font-weight:500}
+.price-total.boost-pulse{animation:boostPulse .9s var(--ease)}
+.price-orig.boost-pulse{animation:boostPulseSub .9s var(--ease)}
+@keyframes boostPulse{0%{transform:scale(1)}40%{transform:scale(1.04);text-shadow:0 0 24px rgba(212,168,75,.5)}100%{transform:scale(1)}}
+@keyframes boostPulseSub{0%,100%{opacity:.28}50%{opacity:.55}}
+
+/* ----- GREEN BOTTOM ROW (shared across variants) ----- */
+.boost-row{
+  margin:0 -36px;padding:0 36px;
+  background:linear-gradient(180deg,rgba(10,122,60,.0) 0%,rgba(10,122,60,.36) 60%,rgba(10,122,60,.46) 100%);
+  border-top:1px solid rgba(52,199,89,.32);
+  display:grid;grid-template-rows:0fr;
+  transition:grid-template-rows .55s var(--ease),background .55s var(--ease),border-color .55s var(--ease);
+  overflow:hidden}
+.boost-row-inner{min-height:0;overflow:hidden;display:flex;flex-direction:column;gap:8px;
+  opacity:0;transform:translateY(6px);transition:opacity .45s var(--ease) .12s,transform .5s var(--ease) .12s}
+.pkg-col.boost-on .boost-row{grid-template-rows:1fr}
+.pkg-col.boost-on .boost-row .boost-row-inner{opacity:1;transform:translateY(0);padding:18px 0 26px}
+.boost-row-line{display:flex;align-items:flex-start;gap:10px;font-size:13px;color:rgba(242,237,228,.92);line-height:1.5;font-weight:500}
+.boost-row-line::before{content:'+';color:var(--green);font-weight:700;font-size:15px;line-height:1.2;flex-shrink:0}
+.boost-row-sub{font-size:11px;color:rgba(242,237,228,.55);letter-spacing:.03em;padding-left:22px;line-height:1.5}
+.boost-row-sub em{color:var(--gold2);font-style:normal;font-weight:500}
+
+/* ============ VARIANT A — "Minimal handle" ============ */
+.v-a .pkg-col{gap:8px}
+.va-handle{
+  appearance:none;border:none;cursor:pointer;
+  display:inline-flex;align-items:center;gap:14px;align-self:center;
+  padding:9px 22px;border-radius:100px;
+  background:rgba(8,68,36,.55);
+  backdrop-filter:blur(20px) saturate(1.3);-webkit-backdrop-filter:blur(20px) saturate(1.3);
+  border:1px solid rgba(212,168,75,.18);
+  color:var(--ink);font-family:'Inter',sans-serif;
+  box-shadow:0 4px 18px rgba(0,0,0,.32);
+  transition:background .4s var(--ease),border-color .4s var(--ease),transform .25s var(--ease),box-shadow .4s var(--ease)}
+.va-handle:hover{background:rgba(12,90,48,.72);border-color:rgba(212,168,75,.35);transform:translateY(-1px);box-shadow:0 8px 28px rgba(0,0,0,.4),0 0 36px rgba(52,199,89,.12)}
+.va-handle[aria-pressed="true"]{background:linear-gradient(180deg,rgba(12,110,58,.72) 0%,rgba(10,122,60,.55) 100%);border-color:rgba(52,199,89,.55);
+  box-shadow:0 8px 32px rgba(0,0,0,.4),0 0 40px rgba(52,199,89,.22)}
+.va-handle .sw{width:38px;height:22px;background:rgba(120,120,128,.32);border-radius:100px;position:relative;flex-shrink:0;transition:background .3s ease}
+.va-handle .sw::after{content:'';position:absolute;top:2px;left:2px;width:18px;height:18px;background:#fff;border-radius:50%;transition:transform .35s cubic-bezier(.34,1.56,.64,1);box-shadow:0 2px 6px rgba(0,0,0,.18)}
+.va-handle[aria-pressed="true"] .sw{background:var(--green)}
+.va-handle[aria-pressed="true"] .sw::after{transform:translateX(16px)}
+.va-handle .lbl{font-size:11px;font-weight:600;letter-spacing:.18em;text-transform:uppercase;color:var(--ink);transition:color .35s var(--ease)}
+.va-handle[aria-pressed="true"] .lbl{color:var(--gold)}
+
+/* ============ VARIANT B — "Full handle" ============ */
+.v-b .pkg-col{gap:10px}
+.vb-handle{
+  appearance:none;border:none;cursor:pointer;width:100%;
+  display:flex;align-items:center;gap:16px;text-align:left;
+  padding:14px 22px;border-radius:18px;
+  background:rgba(8,68,36,.5);
+  backdrop-filter:blur(20px) saturate(1.3);-webkit-backdrop-filter:blur(20px) saturate(1.3);
+  border:1px solid rgba(212,168,75,.18);
+  color:var(--ink);font-family:'Inter',sans-serif;
+  box-shadow:0 6px 22px rgba(0,0,0,.32);
+  transition:background .4s var(--ease),border-color .4s var(--ease),transform .25s var(--ease),box-shadow .4s var(--ease)}
+.vb-handle:hover{background:rgba(12,90,48,.72);border-color:rgba(212,168,75,.35);transform:translateY(-2px);box-shadow:0 10px 32px rgba(0,0,0,.42),0 0 42px rgba(52,199,89,.12)}
+.vb-handle[aria-pressed="true"]{background:linear-gradient(180deg,rgba(12,110,58,.72) 0%,rgba(10,122,60,.55) 100%);border-color:rgba(52,199,89,.55);
+  box-shadow:0 10px 36px rgba(0,0,0,.45),0 0 50px rgba(52,199,89,.22)}
+.vb-handle .sw{width:42px;height:24px;background:rgba(120,120,128,.32);border-radius:100px;position:relative;flex-shrink:0;transition:background .3s ease}
+.vb-handle .sw::after{content:'';position:absolute;top:2px;left:2px;width:20px;height:20px;background:#fff;border-radius:50%;transition:transform .35s cubic-bezier(.34,1.56,.64,1);box-shadow:0 2px 6px rgba(0,0,0,.18)}
+.vb-handle[aria-pressed="true"] .sw{background:var(--green)}
+.vb-handle[aria-pressed="true"] .sw::after{transform:translateX(18px)}
+.vb-text{display:flex;flex-direction:column;gap:3px;min-width:0;flex:1}
+.vb-row1{display:flex;align-items:baseline;gap:10px;flex-wrap:wrap}
+.vb-label{font-size:12px;font-weight:600;letter-spacing:.18em;text-transform:uppercase;color:var(--ink);transition:color .35s var(--ease)}
+.vb-handle[aria-pressed="true"] .vb-label{color:var(--gold)}
+.vb-price{font-family:'Playfair Display',serif;font-size:14px;font-weight:500;color:var(--gold2);letter-spacing:.01em;font-style:italic}
+.vb-sub-wrap{display:grid;align-items:center}
+.vb-sub{grid-row:1;grid-column:1;font-size:11px;color:var(--muted);letter-spacing:.02em;line-height:1.4;transition:opacity .35s var(--ease),color .35s var(--ease)}
+.vb-sub-on{opacity:0;color:var(--gold)}
+.vb-handle[aria-pressed="true"] .vb-sub-off{opacity:0}
+.vb-handle[aria-pressed="true"] .vb-sub-on{opacity:1}
+
+/* ============ VARIANT C — "Header card connection" ============ */
+.v-c .pkg-col{gap:0}
+.vc-handle{
+  appearance:none;cursor:pointer;width:100%;
+  display:flex;align-items:center;gap:16px;text-align:left;
+  padding:14px 36px;
+  border:1px solid rgba(212,168,75,.2);border-bottom:1px solid rgba(212,168,75,.12);
+  border-radius:22px 22px 0 0;
+  background:linear-gradient(180deg,rgba(8,68,36,.62) 0%,rgba(12,90,48,.32) 100%);
+  backdrop-filter:blur(14px) saturate(1.3);-webkit-backdrop-filter:blur(14px) saturate(1.3);
+  color:var(--ink);font-family:'Inter',sans-serif;
+  box-shadow:0 -2px 0 rgba(212,168,75,.45) inset,0 6px 22px rgba(0,0,0,.32);
+  transition:background .4s var(--ease),border-color .4s var(--ease),box-shadow .4s var(--ease);
+  position:relative;z-index:2}
+.vc-handle:hover{background:linear-gradient(180deg,rgba(12,90,48,.78) 0%,rgba(16,110,60,.46) 100%);border-color:rgba(212,168,75,.4)}
+.vc-handle[aria-pressed="true"]{background:linear-gradient(180deg,rgba(12,110,58,.82) 0%,rgba(10,122,60,.55) 100%);border-color:rgba(52,199,89,.55);
+  box-shadow:0 -2px 0 var(--green) inset,0 10px 30px rgba(0,0,0,.4),0 0 42px rgba(52,199,89,.18)}
+.v-c .pkg-col .price-box{border-top-left-radius:0;border-top-right-radius:0;border-top:none;margin-top:-1px}
+.v-c .pkg-col.boost-on .price-box{border-color:rgba(52,199,89,.42)}
+.vc-handle .sw{width:42px;height:24px;background:rgba(120,120,128,.32);border-radius:100px;position:relative;flex-shrink:0;transition:background .3s ease}
+.vc-handle .sw::after{content:'';position:absolute;top:2px;left:2px;width:20px;height:20px;background:#fff;border-radius:50%;transition:transform .35s cubic-bezier(.34,1.56,.64,1);box-shadow:0 2px 6px rgba(0,0,0,.18)}
+.vc-handle[aria-pressed="true"] .sw{background:var(--green)}
+.vc-handle[aria-pressed="true"] .sw::after{transform:translateX(18px)}
+.vc-text{display:flex;flex-direction:column;gap:2px;min-width:0;flex:1}
+.vc-row1{display:flex;align-items:baseline;gap:10px;flex-wrap:wrap}
+.vc-label{font-size:12px;font-weight:600;letter-spacing:.18em;text-transform:uppercase;color:var(--ink);transition:color .35s var(--ease)}
+.vc-handle[aria-pressed="true"] .vc-label{color:var(--gold)}
+.vc-price{font-family:'Playfair Display',serif;font-size:14px;font-weight:500;color:var(--gold2);letter-spacing:.01em;font-style:italic}
+.vc-sub-wrap{display:grid;align-items:center}
+.vc-sub{grid-row:1;grid-column:1;font-size:11px;color:var(--muted);letter-spacing:.02em;line-height:1.4;transition:opacity .35s var(--ease),color .35s var(--ease)}
+.vc-sub-on{opacity:0;color:var(--gold)}
+.vc-handle[aria-pressed="true"] .vc-sub-off{opacity:0}
+.vc-handle[aria-pressed="true"] .vc-sub-on{opacity:1}
+
+/* ----- RESPONSIVE ----- */
+@media(max-width:700px){
+  .price-grid{grid-template-columns:1fr;gap:36px;max-width:none}
+  .price-box{padding:36px 22px 0}
+  .price-includes{padding-bottom:28px}
+  .boost-row{margin:0 -22px;padding:0 22px}
+  .vb-handle,.vc-handle{padding:13px 18px;gap:13px}
+  .vc-handle{padding-left:22px;padding-right:22px}
+  .va-handle{padding:9px 18px;gap:12px}
+  .vb-label,.vc-label{font-size:11px;letter-spacing:.14em}
+  .vb-sub,.vc-sub{font-size:10.5px}
+  .price-title{font-size:26px}
+  .sec-h2{font-size:32px}
+  .sb-bar{padding:12px 16px}
+  .sb-meta{display:none}
+}
+@media(max-width:380px){
+  .vb-row1,.vc-row1{flex-direction:column;gap:2px;align-items:flex-start}
+  .vb-price,.vc-price{font-size:12px}
+}
+</style>
+</head>
+<body>
+
+<div class="sb-bar">
+  <div class="sb-brand">Reach Boost <em>· Sandbox</em></div>
+  <div class="sb-tabs" role="tablist">
+    <button class="sb-tab" data-tab="a" role="tab">A · Minimal</button>
+    <button class="sb-tab active" data-tab="b" role="tab">B · Full</button>
+    <button class="sb-tab" data-tab="c" role="tab">C · Fused</button>
+  </div>
+  <div class="sb-meta">Villa Sjövik · internal</div>
+</div>
+
+<!-- ====================== VARIANT A — MINIMAL HANDLE ====================== -->
+<section class="variant v-a" data-variant="a">
+  <div class="v-inner">
+    <p class="sec-lbl">Variant A · Minimal handle</p>
+    <h2 class="sec-h2">Slim pill above each card — <em>label only.</em></h2>
+    <p class="v-blurb">Centered slim pill, just the switch and a label. All adaptive copy lives in the green bottom row inside the card. Quietest of the three.</p>
+
+    <div class="price-grid">
+
+      <!-- Starter -->
+      <div class="pkg-col" data-pkg="a-starter">
+        <button class="va-handle" type="button" aria-pressed="false" data-toggle="a-starter">
+          <span class="sw" aria-hidden="true"></span>
+          <span class="lbl">Reach Boost</span>
+        </button>
+        <div class="price-box">
+          <h3 class="price-title">Starter</h3>
+          <p class="price-sub">1 video · 2 stories with CTA · 20 lifestyle images</p>
+          <p class="price-total-lbl">Price</p>
+          <p class="price-total" data-base="1650" data-boost="2550">€1 650</p>
+          <span class="price-unit">EUR · ex VAT</span>
+          <div class="price-includes">
+            <p class="pi hi">1 video published in Villa Sjövik's channels</p>
+            <p class="pi hi">2 stories with direct link &amp; CTA</p>
+            <p class="pi hi">20 lifestyle images for your own use</p>
+            <p class="pi">Full usage rights to all material</p>
+            <p class="pi">Styling, photo, film &amp; edit included</p>
+          </div>
+          <div class="boost-row" aria-hidden="true">
+            <div class="boost-row-inner">
+              <div class="boost-row-line">Meta retargeting · 150 000+ extra guaranteed impressions</div>
+              <div class="boost-row-sub">Paid distribution layered on top of the organic post.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Project -->
+      <div class="pkg-col" data-pkg="a-project">
+        <button class="va-handle" type="button" aria-pressed="false" data-toggle="a-project">
+          <span class="sw" aria-hidden="true"></span>
+          <span class="lbl">Reach Boost</span>
+        </button>
+        <div class="price-box featured">
+          <span class="price-ribbon">Most value · Recommended</span>
+          <h3 class="price-title">Project</h3>
+          <p class="price-sub">3 videos · 6 stories with CTA · 60 lifestyle images</p>
+          <p class="price-total-lbl">Price</p>
+          <p class="price-orig" data-base="reg. €4 950" data-boost="reg. €5 850">reg. €4 950</p>
+          <p class="price-total" data-base="3500" data-boost="4400">€3 500</p>
+          <span class="price-unit">EUR · ex VAT</span>
+          <div class="price-includes">
+            <p class="pi hi">3 videos published in Villa Sjövik's channels</p>
+            <p class="pi hi">6 stories with direct link &amp; CTA</p>
+            <p class="pi hi">60 lifestyle images for your own use</p>
+            <p class="pi">Full usage rights to all material</p>
+            <p class="pi">Styling, photo, film &amp; edit included</p>
+          </div>
+          <div class="boost-row" aria-hidden="true">
+            <div class="boost-row-inner">
+              <div class="boost-row-line">Meta retargeting · 150 000+ extra guaranteed impressions per production</div>
+              <div class="boost-row-sub">3 productions × 150 000 = <em>450 000 total guaranteed impressions.</em></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ====================== VARIANT B — FULL HANDLE ====================== -->
+<section class="variant v-b show" data-variant="b">
+  <div class="v-inner">
+    <p class="sec-lbl">Variant B · Full handle</p>
+    <h2 class="sec-h2">A handle the width of the card — <em>label, price and live subtext.</em></h2>
+    <p class="v-blurb">Each handle carries its own toggle, the <code>+€900</code> hint and a one-line subtext that flips when boost is on. Visually clear what you're activating before you see the price move.</p>
+
+    <div class="price-grid">
+
+      <!-- Starter -->
+      <div class="pkg-col" data-pkg="b-starter">
+        <button class="vb-handle" type="button" aria-pressed="false" data-toggle="b-starter">
+          <span class="sw" aria-hidden="true"></span>
+          <span class="vb-text">
+            <span class="vb-row1">
+              <span class="vb-label">Reach Boost</span>
+              <span class="vb-price">+€900</span>
+            </span>
+            <span class="vb-sub-wrap">
+              <span class="vb-sub vb-sub-off">Add 150 000+ guaranteed impressions via Meta Ads</span>
+              <span class="vb-sub vb-sub-on">Active · 150 000+ impressions added</span>
+            </span>
+          </span>
+        </button>
+        <div class="price-box">
+          <h3 class="price-title">Starter</h3>
+          <p class="price-sub">1 video · 2 stories with CTA · 20 lifestyle images</p>
+          <p class="price-total-lbl">Price</p>
+          <p class="price-total" data-base="1650" data-boost="2550">€1 650</p>
+          <span class="price-unit">EUR · ex VAT</span>
+          <div class="price-includes">
+            <p class="pi hi">1 video published in Villa Sjövik's channels</p>
+            <p class="pi hi">2 stories with direct link &amp; CTA</p>
+            <p class="pi hi">20 lifestyle images for your own use</p>
+            <p class="pi">Full usage rights to all material</p>
+            <p class="pi">Styling, photo, film &amp; edit included</p>
+          </div>
+          <div class="boost-row" aria-hidden="true">
+            <div class="boost-row-inner">
+              <div class="boost-row-line">Meta retargeting · 150 000+ extra guaranteed impressions</div>
+              <div class="boost-row-sub">Paid distribution layered on top of the organic post.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Project -->
+      <div class="pkg-col" data-pkg="b-project">
+        <button class="vb-handle" type="button" aria-pressed="false" data-toggle="b-project">
+          <span class="sw" aria-hidden="true"></span>
+          <span class="vb-text">
+            <span class="vb-row1">
+              <span class="vb-label">Reach Boost</span>
+              <span class="vb-price">+€900</span>
+            </span>
+            <span class="vb-sub-wrap">
+              <span class="vb-sub vb-sub-off">Add 150 000+ impressions per production · 450 000 total</span>
+              <span class="vb-sub vb-sub-on">Active · 450 000 total guaranteed impressions</span>
+            </span>
+          </span>
+        </button>
+        <div class="price-box featured">
+          <span class="price-ribbon">Most value · Recommended</span>
+          <h3 class="price-title">Project</h3>
+          <p class="price-sub">3 videos · 6 stories with CTA · 60 lifestyle images</p>
+          <p class="price-total-lbl">Price</p>
+          <p class="price-orig" data-base="reg. €4 950" data-boost="reg. €5 850">reg. €4 950</p>
+          <p class="price-total" data-base="3500" data-boost="4400">€3 500</p>
+          <span class="price-unit">EUR · ex VAT</span>
+          <div class="price-includes">
+            <p class="pi hi">3 videos published in Villa Sjövik's channels</p>
+            <p class="pi hi">6 stories with direct link &amp; CTA</p>
+            <p class="pi hi">60 lifestyle images for your own use</p>
+            <p class="pi">Full usage rights to all material</p>
+            <p class="pi">Styling, photo, film &amp; edit included</p>
+          </div>
+          <div class="boost-row" aria-hidden="true">
+            <div class="boost-row-inner">
+              <div class="boost-row-line">Meta retargeting · 150 000+ extra guaranteed impressions per production</div>
+              <div class="boost-row-sub">3 productions × 150 000 = <em>450 000 total guaranteed impressions.</em></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ====================== VARIANT C — HEADER CARD CONNECTION ====================== -->
+<section class="variant v-c" data-variant="c">
+  <div class="v-inner">
+    <p class="sec-lbl">Variant C · Fused header</p>
+    <h2 class="sec-h2">Toggle and card read as <em>one connected element.</em></h2>
+    <p class="v-blurb">No gap between handle and card — top of the box loses its top-radius and rim, the handle takes the rim. When active, the connecting border turns green so the whole package reads as "boosted."</p>
+
+    <div class="price-grid">
+
+      <!-- Starter -->
+      <div class="pkg-col" data-pkg="c-starter">
+        <button class="vc-handle" type="button" aria-pressed="false" data-toggle="c-starter">
+          <span class="sw" aria-hidden="true"></span>
+          <span class="vc-text">
+            <span class="vc-row1">
+              <span class="vc-label">Reach Boost</span>
+              <span class="vc-price">+€900</span>
+            </span>
+            <span class="vc-sub-wrap">
+              <span class="vc-sub vc-sub-off">Add 150 000+ guaranteed impressions via Meta Ads</span>
+              <span class="vc-sub vc-sub-on">Active · 150 000+ impressions added</span>
+            </span>
+          </span>
+        </button>
+        <div class="price-box">
+          <h3 class="price-title">Starter</h3>
+          <p class="price-sub">1 video · 2 stories with CTA · 20 lifestyle images</p>
+          <p class="price-total-lbl">Price</p>
+          <p class="price-total" data-base="1650" data-boost="2550">€1 650</p>
+          <span class="price-unit">EUR · ex VAT</span>
+          <div class="price-includes">
+            <p class="pi hi">1 video published in Villa Sjövik's channels</p>
+            <p class="pi hi">2 stories with direct link &amp; CTA</p>
+            <p class="pi hi">20 lifestyle images for your own use</p>
+            <p class="pi">Full usage rights to all material</p>
+            <p class="pi">Styling, photo, film &amp; edit included</p>
+          </div>
+          <div class="boost-row" aria-hidden="true">
+            <div class="boost-row-inner">
+              <div class="boost-row-line">Meta retargeting · 150 000+ extra guaranteed impressions</div>
+              <div class="boost-row-sub">Paid distribution layered on top of the organic post.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Project -->
+      <div class="pkg-col" data-pkg="c-project">
+        <button class="vc-handle" type="button" aria-pressed="false" data-toggle="c-project">
+          <span class="sw" aria-hidden="true"></span>
+          <span class="vc-text">
+            <span class="vc-row1">
+              <span class="vc-label">Reach Boost</span>
+              <span class="vc-price">+€900</span>
+            </span>
+            <span class="vc-sub-wrap">
+              <span class="vc-sub vc-sub-off">Add 150 000+ impressions per production · 450 000 total</span>
+              <span class="vc-sub vc-sub-on">Active · 450 000 total guaranteed impressions</span>
+            </span>
+          </span>
+        </button>
+        <div class="price-box featured">
+          <span class="price-ribbon">Most value · Recommended</span>
+          <h3 class="price-title">Project</h3>
+          <p class="price-sub">3 videos · 6 stories with CTA · 60 lifestyle images</p>
+          <p class="price-total-lbl">Price</p>
+          <p class="price-orig" data-base="reg. €4 950" data-boost="reg. €5 850">reg. €4 950</p>
+          <p class="price-total" data-base="3500" data-boost="4400">€3 500</p>
+          <span class="price-unit">EUR · ex VAT</span>
+          <div class="price-includes">
+            <p class="pi hi">3 videos published in Villa Sjövik's channels</p>
+            <p class="pi hi">6 stories with direct link &amp; CTA</p>
+            <p class="pi hi">60 lifestyle images for your own use</p>
+            <p class="pi">Full usage rights to all material</p>
+            <p class="pi">Styling, photo, film &amp; edit included</p>
+          </div>
+          <div class="boost-row" aria-hidden="true">
+            <div class="boost-row-inner">
+              <div class="boost-row-line">Meta retargeting · 150 000+ extra guaranteed impressions per production</div>
+              <div class="boost-row-sub">3 productions × 150 000 = <em>450 000 total guaranteed impressions.</em></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<script>
+/* ---------- Tab switcher ---------- */
+(function(){
+  const tabs = document.querySelectorAll('.sb-tab');
+  const variants = document.querySelectorAll('.variant');
+  function show(key){
+    tabs.forEach(t => t.classList.toggle('active', t.dataset.tab === key));
+    variants.forEach(v => v.classList.toggle('show', v.dataset.variant === key));
+    try { history.replaceState(null,'','#'+key); } catch(e){}
+  }
+  tabs.forEach(t => t.addEventListener('click', () => show(t.dataset.tab)));
+  // Restore from hash on load
+  const hash = (location.hash || '').replace('#','').toLowerCase();
+  if (hash === 'a' || hash === 'b' || hash === 'c') show(hash);
+})();
+
+/* ---------- Per-package Reach Boost mechanic (shared across variants) ----------
+   data-toggle on the button matches data-pkg on the .pkg-col. Each toggle
+   only updates its own column's price-total / price-orig (data-base ↔ data-boost
+   mechanic copied verbatim from skeppshult/index.html). */
+(function(){
+  function fmt(n){
+    // Thousands separator with a thin non-breaking space (matches '€1 650' look).
+    return Math.round(n).toLocaleString('en-US').replace(/,/g,' ');
+  }
+  function animateNumber(el, from, to, duration){
+    const prefix = (el.textContent.match(/^[^\d\-]+/) || [''])[0] || '€';
+    const start = performance.now();
+    function tick(now){
+      const t = Math.min((now - start) / duration, 1);
+      const eased = 1 - Math.pow(1 - t, 3);
+      el.textContent = prefix + fmt(from + (to - from) * eased);
+      if (t < 1) requestAnimationFrame(tick);
+    }
+    requestAnimationFrame(tick);
+  }
+
+  document.querySelectorAll('[data-toggle]').forEach(btn => {
+    const key = btn.dataset.toggle;
+    const col = document.querySelector('.pkg-col[data-pkg="'+key+'"]');
+    if (!col) return;
+
+    const totals = col.querySelectorAll('.price-total[data-base][data-boost]');
+    const origs  = col.querySelectorAll('.price-orig[data-base][data-boost]');
+    let active = false;
+
+    btn.addEventListener('click', () => {
+      active = !active;
+      btn.setAttribute('aria-pressed', active ? 'true' : 'false');
+      col.classList.toggle('boost-on', active);
+
+      totals.forEach(el => {
+        const base = +el.dataset.base, boost = +el.dataset.boost;
+        const from = active ? base : boost;
+        const to   = active ? boost : base;
+        animateNumber(el, from, to, 720);
+        el.classList.remove('boost-pulse');
+        void el.offsetWidth;
+        el.classList.add('boost-pulse');
+      });
+      origs.forEach(el => {
+        el.textContent = active ? el.dataset.boost : el.dataset.base;
+        el.classList.remove('boost-pulse');
+        void el.offsetWidth;
+        el.classList.add('boost-pulse');
+      });
+    });
+  });
+})();
+</script>
+</body>
+</html>
