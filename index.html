@@ -2483,30 +2483,50 @@ if(spotSec){
   refreshCard('season');
 })();
 
-/* META-RÄCKVIDD AUTO-DEMO — vid första scroll-in: blinka featured-paketets pkg-boost-toggle (på och av) så besökaren ser funktionaliteten */
+/* META-RÄCKVIDD AUTO-AKTIVERING — Kampanjpaket (featured) togglar ON automatiskt
+   när investerings-sektionen står stilla i view en kort stund. Cancellas om
+   användaren scrollar förbi innan delay-tiden gått ut (så de inte råkar trigga
+   det när de bara passerade sektionen för att läsa något nedan). Startpaket
+   påverkas INTE. */
 (function(){
   const sec=document.getElementById('sec-pr');
   const btn=document.querySelector('.pkg-col.featured .pkg-boost-head');
   if(!sec||!btn)return;
 
-  try{if(sessionStorage.getItem('hott-sauna-boost-demo-shown')==='true')return}catch(e){}
+  try{if(sessionStorage.getItem('hott-sauna-boost-autoactivated')==='true')return}catch(e){}
   if(window.matchMedia&&window.matchMedia('(prefers-reduced-motion: reduce)').matches)return;
 
+  const DELAY_MS=1800;       // måste vara i view såhär länge innan aktivering
+  const VIEW_THRESHOLD=0.45; // minst 45% av sektionen synlig
+
   let triggered=false;
+  let timerId=null;
+
   const obs=new IntersectionObserver((entries)=>{
     entries.forEach(e=>{
-      if(!e.isIntersecting||triggered)return;
-      triggered=true;obs.unobserve(e.target);
-
-      setTimeout(()=>{
-        btn.click();
-        setTimeout(()=>{
-          btn.click();
-          try{sessionStorage.setItem('hott-sauna-boost-demo-shown','true')}catch(e){}
-        },3000);
-      },1400);
+      if(triggered)return;
+      if(e.isIntersecting){
+        if(timerId===null){
+          timerId=setTimeout(()=>{
+            timerId=null;
+            if(triggered)return;
+            // dubbelkolla att sektionen fortfarande är i view + att featured inte
+            // redan togglats manuellt av användaren
+            const wrap=btn.closest('.pkg-boost');
+            const alreadyOn=wrap && wrap.getAttribute('aria-pressed')==='true';
+            if(alreadyOn){triggered=true;return;}
+            triggered=true;
+            obs.unobserve(sec);
+            btn.click();
+            try{sessionStorage.setItem('hott-sauna-boost-autoactivated','true')}catch(e){}
+          },DELAY_MS);
+        }
+      }else{
+        // användaren scrollade förbi innan delay gått ut — cancella
+        if(timerId!==null){clearTimeout(timerId);timerId=null;}
+      }
     });
-  },{threshold:0.3});
+  },{threshold:VIEW_THRESHOLD});
 
   obs.observe(sec);
 })();
